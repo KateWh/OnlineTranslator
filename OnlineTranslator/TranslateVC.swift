@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import CoreData
 
 // new class for display "Round Button" menu in Attributes inspector, in Xcode
 class RoundButton: UIButton {
@@ -27,7 +28,7 @@ class RoundButton: UIButton {
     }
 }  // END RoundButton class
 
-// temlate to JSONdecode fetching data
+// template to JSONdecode fetching data
 struct TranslateResult: Codable {
     var code: Int
     var lang: String
@@ -35,7 +36,7 @@ struct TranslateResult: Codable {
 }
 
 class TranslateVC: UIViewController, HistoryTVDelegate {
-    
+
     @IBOutlet weak var inputTextField: UITextView!
     @IBOutlet weak var outputTextField: UITextView!
     @IBOutlet weak var vectorOutlet: UIButton!
@@ -47,25 +48,35 @@ class TranslateVC: UIViewController, HistoryTVDelegate {
     var fromLanguage = "ru"
     var toLanguage = "en"
     var rotateFlag = true
-    var historyStrArray = [String]()
-    var delegatedHistory = [String]()
+    var historyStrArray = [""]
+    var delegatedHistory = [""]
+    var delegatedLang = ""
     var titleText = ""
     var timer = Timer()
     var counter = 1
     var titleString = "    Translate    "
-    var countTranslations = 0
-    var date = 0
+    var countTranslations: Int? = nil
+    var date: Int? = nil
+
 
     override func viewWillAppear(_ animated: Bool) {
         // navigationBar is hidden
         self.navigationController?.setNavigationBarHidden(true, animated: false)
         if historyStorage.timerIsTrue {
-            timerSave.setTitle(prepareToView(), for: UIControl.State.normal)
+            timerSave.setTitle(prepareToView(), for: .normal)
+        }
+        let ccc = historyStorage.CCCP()
+        for c in ccc {
+            if c.key == "countTranslations" {
+                countTranslations = c.value }
+            if c.key == "date" {
+                date = c.value
+            }
         }
     }
     override func viewWillDisappear(_ animated: Bool) {
-        historyStorage.saveCountTranslate(countTranslate: countTranslations)
-        historyStorage.saveDate(date: date)
+        historyStorage.saveCountTranslate(countTranslate: countTranslations!)
+        historyStorage.saveDate(date: date!)
     }
     
     // makes a string to display from the data in the database
@@ -191,8 +202,8 @@ class TranslateVC: UIViewController, HistoryTVDelegate {
                     self.translateButtonOutlet.setTitle("    Translate    ", for: .normal)
                     self.outputTextField.text = "\(translate.text[0])"
                     // increment count translating and display it on the button
-                    self.countTranslations += 1
-                    self.timerSave.setTitle("6(\(self.countTranslations))", for: UIControl.State.normal)
+                    self.countTranslations! += 1
+                    self.timerSave.setTitle("6(\(self.countTranslations!))", for: UIControl.State.normal)
                 }
                 // stop timer and update counter for #selector of timer
                 self.timer.invalidate()
@@ -204,10 +215,15 @@ class TranslateVC: UIViewController, HistoryTVDelegate {
         
     }
     
+    func deleteHistory(at language: String) -> Int {
+        return historyStorage.deleteHistory(at: language)
+    }
+    
     // "Russian" button
     @IBAction func ruButton(_ sender: RoundButton) {
         delegatedHistory = fetchRuHistory()
         titleText = "История"
+        delegatedLang = "ru"
         DispatchQueue.main.async {
             self.performSegue(withIdentifier: "historySegue", sender: self)
         }
@@ -217,6 +233,7 @@ class TranslateVC: UIViewController, HistoryTVDelegate {
     @IBAction func enButton(_ sender: RoundButton) {
         delegatedHistory = fetchEnHistory()
         titleText = "History"
+        delegatedLang = "en"
         DispatchQueue.main.async {
             self.performSegue(withIdentifier: "historySegue", sender: self)
         }
@@ -224,16 +241,22 @@ class TranslateVC: UIViewController, HistoryTVDelegate {
     
     // input again to translate
     @IBAction func tryAgainButton(_ sender: RoundButton) {
-            inputTextField.text = ""
-            outputTextField.text = ""
-            // cursor appear
-            inputTextField.select(sender)
+        // stop timer
+        self.timer.invalidate()
+        self.counter = 1
+        DispatchQueue.main.async {
+            self.translateButtonOutlet.setTitle("    Translate    ", for: .normal)
+        }
+        inputTextField.text = ""
+        outputTextField.text = ""
+        // cursor appear
+        inputTextField.select(sender)
     }
      
     // segue to TableView
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-            let destinationVC = segue.destination as? HistoryTableViewController
-            destinationVC!.delegate = self
+        let destinationVC = segue.destination as? HistoryTableViewController
+        destinationVC!.delegate = self
     }
     
 }
