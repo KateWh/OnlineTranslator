@@ -12,7 +12,7 @@ import CoreData
 public class HistoryStorage {
     var ruID: Int? = nil
     var enID: Int? = nil
-    var timerIsTrue = false
+    var counterFlag = false
     
     init() {
         guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else { return }
@@ -38,7 +38,7 @@ public class HistoryStorage {
             print(error)
         }
     }
-    
+        
     func CCCP() -> [String:Int] {
         let appDelegate = UIApplication.shared.delegate as? AppDelegate
         let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "LifeCounter")
@@ -130,7 +130,7 @@ public class HistoryStorage {
             } else {
                 timerObject.setValue(countTranslate, forKey: "countTranslate")
             }
-            timerIsTrue = true
+            counterFlag = true
         } catch {
             print("save counter not found")
         }
@@ -170,7 +170,7 @@ public class HistoryStorage {
             } else {
                 timerObject.setValue(date, forKey: "date")
             }
-            timerIsTrue = true
+            counterFlag = true
         } catch {
             print("save data not found")
         }
@@ -204,27 +204,28 @@ public class HistoryStorage {
         do {
             let historyTable = try managedContext.fetch(fetchRequest)
             for historyItem in historyTable as! [NSManagedObject] {
-                if (historyItem.value(forKey: "ruID") as? Int)  != nil  {
-                    managedContext.delete(historyItem)
-                    counter += 1
-                } else if (historyItem.value(forKey: "enID") as? Int)  != nil  {
+                if (historyItem.value(forKey: lang) as? String)  != nil  {
                     managedContext.delete(historyItem)
                     counter += 1
                 }
             }
- 
+
             do {
                 try managedContext.save()
             } catch {
                 print(error)
             }
+            
         } catch {
             print(error)
         }
-        print(counter)
+        
         return counter
     }
     
+    public func bookmarks() {
+        print("bookmark func is called")
+    }
     
     
     

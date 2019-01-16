@@ -62,7 +62,7 @@ class TranslateVC: UIViewController, HistoryTVDelegate {
     override func viewWillAppear(_ animated: Bool) {
         // navigationBar is hidden
         self.navigationController?.setNavigationBarHidden(true, animated: false)
-        if historyStorage.timerIsTrue {
+        if historyStorage.counterFlag {
             timerSave.setTitle(prepareToView(), for: .normal)
         }
         let ccc = historyStorage.CCCP()
@@ -75,6 +75,9 @@ class TranslateVC: UIViewController, HistoryTVDelegate {
         }
     }
     override func viewWillDisappear(_ animated: Bool) {
+        self.timer.invalidate()
+        self.counter = 1
+        self.translateButtonOutlet.setTitle("    Translate    ", for: .normal)
         historyStorage.saveCountTranslate(countTranslate: countTranslations!)
         historyStorage.saveDate(date: date!)
     }
@@ -98,9 +101,11 @@ class TranslateVC: UIViewController, HistoryTVDelegate {
             fromLanguage = "en"
             toLanguage = "ru"
             // changed input text to output text, and vise versa, like  ( A -> B ,  B -> A )
-            let saveInputText = inputTextField.text
-            inputTextField.text = outputTextField.text
-            outputTextField.text = saveInputText
+            if !outputTextField.text.isEmpty {
+                let saveInputText = inputTextField.text
+                inputTextField.text = outputTextField.text
+                outputTextField.text = saveInputText
+            }
         } else {
             // rotate arrow forward on 180°
             UIView.animate(withDuration: 0.4, delay: 0, options: UIView.AnimationOptions.curveEaseIn, animations: { () -> Void in
@@ -111,9 +116,11 @@ class TranslateVC: UIViewController, HistoryTVDelegate {
             fromLanguage = "ru"
             toLanguage = "en"
             // change input text to output text, and vise versa, like  ( A -> B ,  B -> A )
-            let saveInputText = inputTextField.text
-            inputTextField.text = outputTextField.text
-            outputTextField.text = saveInputText
+            if !outputTextField.text.isEmpty {
+                let saveInputText = inputTextField.text
+                inputTextField.text = outputTextField.text
+                outputTextField.text = saveInputText
+            }
         }
     }
     
@@ -143,6 +150,7 @@ class TranslateVC: UIViewController, HistoryTVDelegate {
         // remove whitespaces and newLine symbols from trailing and ... of the input string
         let inputText = inputTextField.text.trimmingCharacters(in: .whitespacesAndNewlines)
         if inputText != "" {
+            timer.invalidate()
             // start timer to print on RED button progress
             self.timer = Timer.scheduledTimer(timeInterval: 0.7, target: self, selector: #selector(self.setTitle), userInfo: nil, repeats: true)
         }
