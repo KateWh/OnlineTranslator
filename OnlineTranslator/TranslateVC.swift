@@ -35,7 +35,7 @@ struct TranslateResult: Codable {
     var text: [String]
 }
 
-class TranslateVC: UIViewController, HistoryTVDelegate {
+class TranslateVC: UIViewController, HistoryTVDelegateProtocol {
 
     @IBOutlet weak var inputTextField: UITextView!
     @IBOutlet weak var outputTextField: UITextView!
@@ -48,51 +48,59 @@ class TranslateVC: UIViewController, HistoryTVDelegate {
     var fromLanguage = "ru"
     var toLanguage = "en"
     var rotateFlag = true
-    var historyStrArray = [""]
-    var delegatedHistory = [""]
-    var delegatedLang = ""
+    var dataArray = [""]
+    var delegatedLang: String?
+    var delegatedBookmarks = [""]
     var titleText = ""
     var timer = Timer()
     var counter = 1
     var titleString = "    Translate    "
     var countTranslations: Int? = nil
     var date: Int? = nil
-
+    var myDate = Date(timeIntervalSinceNow: 7200)
 
     override func viewWillAppear(_ animated: Bool) {
         // navigationBar is hidden
         self.navigationController?.setNavigationBarHidden(true, animated: false)
-        if historyStorage.counterFlag {
-            timerSave.setTitle(prepareToView(), for: .normal)
-        }
-        let ccc = historyStorage.CCCP()
-        for c in ccc {
-            if c.key == "countTranslations" {
-                countTranslations = c.value }
-            if c.key == "date" {
-                date = c.value
-            }
-        }
+        let countTranslate = historyStorage.getCountTranslate()
+        countTranslations = countTranslate
+        timerSave.setTitle(prepareToView(), for: .normal)
     }
+    
     override func viewWillDisappear(_ animated: Bool) {
         self.timer.invalidate()
         self.counter = 1
         self.translateButtonOutlet.setTitle("    Translate    ", for: .normal)
         historyStorage.saveCountTranslate(countTranslate: countTranslations!)
-        historyStorage.saveDate(date: date!)
     }
-    
+ 
     // makes a string to display from the data in the database
     func prepareToView() -> String {
-        _ = historyStorage.getDate()
+        let urlToDocumentsFolder = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).last!
+        //installDate is NSDate of install
+        let installDate = (try! FileManager.default.attributesOfItem(atPath: urlToDocumentsFolder.path)[FileAttributeKey.creationDate])
+        print("This app was installed by the user on \(String(describing: installDate))")
+        print("This is date now: \(myDate)")
+        var result = 6
+        let calendar = Calendar.current
+        let month = calendar.component(.month, from: myDate) as Int
+        let day = calendar.component(.day, from: myDate) as Int
+        let monthInstall = calendar.component(.month, from: installDate as! Date) as Int
+        let dayInstall = calendar.component(.day, from: installDate as! Date) as Int
+        if monthInstall < month {
+            
+        } else if monthInstall == month {
+            result -= day - dayInstall
+        }
+        
         let translates = historyStorage.getCountTranslate()
-        return "6(\(translates))"
+        return "\(result)(\(translates))"
     }
 
     // arrow button to translate
     @IBAction func vectorButton(_ sender: UIButton) {
         if rotateFlag {
-            // rotate arrow back on 180°
+            // rotate arrow backward on 180°
             UIView.animate(withDuration: 0.4, delay: 0, options: UIView.AnimationOptions.curveEaseIn, animations: { () -> Void in
                 self.vectorOutlet.transform = CGAffineTransform(rotationAngle: .pi/1)
             }, completion: nil)
@@ -159,26 +167,13 @@ class TranslateVC: UIViewController, HistoryTVDelegate {
         // do request to server
         requestResponseFunc(input: inputText)
         // read data from local storage and check input with this data on coincidence
-        historyStrArray = historyStorage.retrieveData(lang: fromLanguage)
-        for historyWord in historyStrArray {
+        for historyWord in historyStorage.getHistory(lang: fromLanguage) {
             guard historyWord != inputText else { return }
         }
         // write data to local storage
         if inputText != "" {
-            historyStorage.createData(from: inputText, lang: fromLanguage)
+            historyStorage.createData(from: inputText, at: fromLanguage)
         }
-    }
-    
-    // fetch EN history
-    func fetchEnHistory() -> [String] {
-        historyStrArray = historyStorage.retrieveData(lang: "en")
-        return historyStrArray
-    }
-    
-    // fetch RU history
-    func fetchRuHistory() -> [String] {
-        historyStrArray = historyStorage.retrieveData(lang: "ru")
-        return historyStrArray
     }
     
     // request/response func declaration
@@ -227,9 +222,13 @@ class TranslateVC: UIViewController, HistoryTVDelegate {
         return historyStorage.deleteHistory(at: language)
     }
     
+    func deleteBookmarks(at language: String) -> Int {
+        return historyStorage.deleteBookmarks(atLang: language)
+    }
+    
     // "Russian" button
     @IBAction func ruButton(_ sender: RoundButton) {
-        delegatedHistory = fetchRuHistory()
+        dataArray = historyStorage.getHistory(lang: "ru")
         titleText = "История"
         delegatedLang = "ru"
         DispatchQueue.main.async {
@@ -239,9 +238,17 @@ class TranslateVC: UIViewController, HistoryTVDelegate {
     
     // "English" button
     @IBAction func enButton(_ sender: RoundButton) {
-        delegatedHistory = fetchEnHistory()
+        dataArray = historyStorage.getHistory(lang: "en")
         titleText = "History"
         delegatedLang = "en"
+        DispatchQueue.main.async {
+            self.performSegue(withIdentifier: "historySegue", sender: self)
+        }
+    }
+    
+    @IBAction func bookmarksButton(_ sender: RoundButton) {
+        dataArray = historyStorage.getBookmarks()
+        titleText = "Bookmarks"
         DispatchQueue.main.async {
             self.performSegue(withIdentifier: "historySegue", sender: self)
         }

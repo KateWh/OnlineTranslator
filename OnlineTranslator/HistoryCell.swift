@@ -8,26 +8,60 @@
 
 import UIKit
 
+struct HasFavorite {
+    var value: String
+    var favoriteFlag: Bool
+}
+
+
 class HistoryCell: UITableViewCell {
     
-    var link: HistoryStorage?
+    var storage: HistoryStorage!
+    var table = HistoryTableViewController()
+    var translateVC: TranslateVC!
+    var bookmarkFlag = false
+    var favoritesArray = [HasFavorite]()
     
     override func awakeFromNib() {
         super.awakeFromNib()
-        
-        // create "★"
-        let starButton = UIButton(type: .system)
+    }
+
+    // create "★"
+    func createStar() {
+        let button = UIButton(type: .system)
         let image = UIImage(named: "LackyStar.png")
-        starButton.setImage(image, for: .normal)
-        starButton.tintColor = #colorLiteral(red: 0.4915600419, green: 0.4730434418, blue: 0.03819935396, alpha: 1)
-        starButton.frame = CGRect(x: 0, y: 0, width: 20, height: 20)
-        starButton.addTarget(self, action: #selector(starHandler), for: .touchUpInside)
-        accessoryView = starButton
+        button.setImage(image, for: .normal)
+        button.tintColor = #colorLiteral(red: 0.501960814, green: 0.501960814, blue: 0.501960814, alpha: 1)
+        button.frame = CGRect(x: 0, y: 0, width: 20, height: 20)
+        button.addTarget(self, action: #selector(starHandler), for: .touchUpInside)
+        accessoryView = button
+        
+        for value in (table.delegate?.dataArray)! {
+            favoritesArray.append(HasFavorite(value: value, favoriteFlag: bookmarkFlag))
+        }
     }
     
+    // star selector handler
     @objc private func starHandler() {
-        link?.bookmarks()
-        print("★")
+        bookmarkFlag = !bookmarkFlag
+        //let arrayWithData = table.delegate?.dataArray
+        let valueOfCell = table.valueOfCell(forCell: self, at: table.lang!)
         
+        for (indx, favoriteVal) in favoritesArray.enumerated() {
+            if favoriteVal.value == valueOfCell {
+                favoritesArray[indx].favoriteFlag = bookmarkFlag
+            }
+        }
+        
+        print("------------------------")
+        for indx in favoritesArray {
+            print(indx.value, indx.favoriteFlag)
+        }
+        
+        for bookmark in storage.getBookmarks() {
+            guard bookmark != valueOfCell else { return }
+        }
+        storage.setBookmark(forValue: valueOfCell , at: "")
     }
 }
+

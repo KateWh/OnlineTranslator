@@ -38,30 +38,23 @@ public class HistoryStorage {
             print(error)
         }
     }
-        
-    func CCCP() -> [String:Int] {
-        let appDelegate = UIApplication.shared.delegate as? AppDelegate
+    
+    func fetchEntity(_ completionHandler: @escaping ([NSManagedObject]) -> Void) {
+        guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else { return }
+        let managedContext = appDelegate.persistentContainer.viewContext
         let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "LifeCounter")
-        let managedContext = appDelegate!.persistentContainer.viewContext
-        var timer = [String:Int]()
         
         do {
             let result = try managedContext.fetch(fetchRequest) as! [NSManagedObject]
-            if result == [] {
-                timer.merge(["countTranslations" : 0], uniquingKeysWith: {(current, _) in current})
-                timer.merge(["date" : 6], uniquingKeysWith: {(current, _) in current})            }
-            for object in result {
-            timer.merge(["countTranslations": object.value(forKey: "countTranslate") as? Int ?? 0], uniquingKeysWith: { (current, _) in current })
-            timer.merge(["date": object.value(forKey: "date") as? Int ?? 0], uniquingKeysWith: { (current, _) in current })
-            }
+            completionHandler(result)
         } catch {
-            print(error)
+            print("error")
         }
-        return timer
+        
     }
 
     // Write data
-    public func createData(from data: String, lang: String) {
+    public func createData(from data: String, at lang: String) {
         guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else { return }
         let managedContext = appDelegate.persistentContainer.viewContext
         //let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "History")
@@ -87,7 +80,7 @@ public class HistoryStorage {
    }
     
     // Retrieve Data from storage
-    public func retrieveData(lang: String) -> [String] {
+    public func getHistory(lang: String) -> [String] {
         guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else { return ["Error"] }
         let managedContext = appDelegate.persistentContainer.viewContext
         let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "History")
@@ -111,89 +104,45 @@ public class HistoryStorage {
         }
         return historyArr
     }
-    
-    
+        
     // Save count translate
     public func saveCountTranslate(countTranslate: Int) {
         guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else {return}
         let managedContext = appDelegate.persistentContainer.viewContext
         let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "LifeCounter")
-
+        
         let timerTable = NSEntityDescription.entity(forEntityName: "LifeCounter", in: managedContext)!
         let timerObject = NSManagedObject(entity: timerTable, insertInto: managedContext)
-
+        
         do {
-            let object = try managedContext.fetch(fetchRequest)
-            let objectUpdate = object[0] as! NSManagedObject
-            if objectUpdate.value(forKey: "countTranslate") as? String != nil {
-                objectUpdate.setValue(countTranslate, forKey: "countTranslate")
+            let objectUpdate = try managedContext.fetch(fetchRequest) as! [NSManagedObject]
+            if objectUpdate != [] {
+                for object in objectUpdate {
+                    object.setValue(countTranslate, forKey: "countTranslate")
+                }
             } else {
                 timerObject.setValue(countTranslate, forKey: "countTranslate")
             }
-            counterFlag = true
         } catch {
             print("save counter not found")
         }
     }
-
+    
     // Retrieve count translate
     public func getCountTranslate() -> Int {
         guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else { return 0 }
         let managedContext = appDelegate.persistentContainer.viewContext
         let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "LifeCounter")
         var objectReturn = 0
-         do {
-            let timerString = try managedContext.fetch(fetchRequest)
-            for object in timerString as! [NSManagedObject] {
-                objectReturn = object.value(forKey: "countTranslate") as! Int
-            }
+        do {
+            let timerString = try managedContext.fetch(fetchRequest) as! [NSManagedObject]
+            objectReturn = timerString.last?.value(forKey: "countTranslate") as? Int ?? 0
         } catch {
             print( "O боже где count 😧")
         }
         return objectReturn
     }
-    
-    // Save date
-    public func saveDate(date: Int) {
-        guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else {return}
-        let managedContext = appDelegate.persistentContainer.viewContext
-        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "LifeCounter")
 
-        let timerTable = NSEntityDescription.entity(forEntityName: "LifeCounter", in: managedContext)!
-        let timerObject = NSManagedObject(entity: timerTable, insertInto: managedContext)
-
-        do {
-            let object = try managedContext.fetch(fetchRequest)
-            let objectUpdate = object[0] as! NSManagedObject
-            if objectUpdate.value(forKey: "date") as? String != nil {
-                objectUpdate.setValue(date, forKey: "date")
-            } else {
-                timerObject.setValue(date, forKey: "date")
-            }
-            counterFlag = true
-        } catch {
-            print("save data not found")
-        }
-
-    }
-    
-    // Retrieve date 
-    public func getDate() -> Int {
-        guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else { return 0 }
-        let managedContext = appDelegate.persistentContainer.viewContext
-        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "LifeCounter")
-        var objectReturn = 0
-        do {
-            let timerString = try managedContext.fetch(fetchRequest)
-            for object in timerString as! [NSManagedObject] {
-                objectReturn = object.value(forKey: "date") as! Int
-            }
-        } catch {
-            print( "O боже где date 😧")
-        }
-        return objectReturn
-    }
-    
     // ===================== DELETE HISTORY ================================
     public func deleteHistory(at lang: String) -> Int {
         guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else { return -1 }
@@ -223,12 +172,84 @@ public class HistoryStorage {
         return counter
     }
     
-    public func bookmarks() {
-        print("bookmark func is called")
+    public func setBookmark(forValue cellString: String, at lang: String) {
+        guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else { return }
+        let managedContext = appDelegate.persistentContainer.viewContext
+        let ruBookmarksEntity = NSEntityDescription.entity(forEntityName: "RuBookmarks", in: managedContext)!
+        let enBookmarksEntity = NSEntityDescription.entity(forEntityName: "EnBookmarks", in: managedContext)!
+        let newRuBookmark = NSManagedObject(entity: ruBookmarksEntity, insertInto: managedContext)
+        let newEnBookmark = NSManagedObject(entity: enBookmarksEntity, insertInto: managedContext)
+        
+        if lang == "ru" {
+            newRuBookmark.setValue(String(cellString), forKey: "bookmark")
+        } else if lang == "en" {
+            newEnBookmark.setValue(String(cellString), forKey: "bookmark")
+        }
+        
+        do {
+            try managedContext.save()
+        } catch {
+            print(error)
+        }
+        
     }
     
     
-    
+    func getBookmarks() -> [String] {
+        guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else { return [] }
+        let managedContext = appDelegate.persistentContainer.viewContext
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "RuBookmarks")
+        var bookmarksArray = [String]()
+        
+        do {
+            let bookmarkTable = try managedContext.fetch(fetchRequest)
+            for bookmarkRow in bookmarkTable as! [NSManagedObject] {
+                if let bookmark = bookmarkRow.value(forKey: "bookmark") {
+                    bookmarksArray.append(bookmark as! String)
+                }
+            }
+        } catch {
+            print(error)
+        }
+        return bookmarksArray
+    }
+
+    func deleteBookmarks(atLang lang: String) -> Int {
+        guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else { return 0 }
+        let managedContext = appDelegate.persistentContainer.viewContext
+        let fetchRu = NSFetchRequest<NSFetchRequestResult>(entityName: "RuBookmarks")
+        let fetchEn = NSFetchRequest<NSFetchRequestResult>(entityName: "EnBookmarks")
+        let requestRu = NSBatchDeleteRequest(fetchRequest: fetchRu)
+        let requestEn = NSBatchDeleteRequest(fetchRequest: fetchEn)
+        var counterOfBookmarks = -1
+
+        do {
+            let ruBookmarksTable = try managedContext.fetch(fetchRu)
+            let enBookmarksTable = try managedContext.fetch(fetchEn)
+            
+            if lang == "ru" {
+                for _ in ruBookmarksTable as! [NSManagedObject] {
+                    counterOfBookmarks += 1
+                }
+                try managedContext.execute(requestRu)
+            } else if lang == "en" {
+                for _ in enBookmarksTable as! [NSManagedObject] {
+                    counterOfBookmarks += 1
+                }
+                try managedContext.execute(requestEn)
+            }
+            
+            do {
+                try managedContext.save()
+            } catch {
+                print(error)
+            }
+            
+        } catch {
+            print(error)
+        }
+        return counterOfBookmarks
+    }
     
 }
 

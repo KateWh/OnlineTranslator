@@ -91,7 +91,7 @@
                                                 <constraints>
                                                     <constraint firstAttribute="height" constant="30" id="tMt-7X-ZCF"/>
                                                 </constraints>
-                                                <state key="normal" title="Bookmark">
+                                                <state key="normal" title="Bookmarks">
                                                     <color key="titleColor" red="1" green="0.85249298809999996" blue="0.75854092839999998" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                                 </state>
                                                 <userDefinedRuntimeAttributes>
@@ -99,6 +99,9 @@
                                                         <real key="value" value="5"/>
                                                     </userDefinedRuntimeAttribute>
                                                 </userDefinedRuntimeAttributes>
+                                                <connections>
+                                                    <action selector="bookmarksButton:" destination="BYZ-38-t0r" eventType="touchUpInside" id="qZj-5B-gEl"/>
+                                                </connections>
                                             </button>
                                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="1iu-JB-mJq" customClass="RoundButton" customModule="OnlineTranslator" customModuleProvider="target">
                                                 <rect key="frame" x="188" y="0.0" width="84" height="30"/>
