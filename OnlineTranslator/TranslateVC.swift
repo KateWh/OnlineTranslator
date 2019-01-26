@@ -8,6 +8,8 @@
 
 import UIKit
 import CoreData
+import AVFoundation
+import AudioToolbox
 
 // new class for display "Round Button" menu in Attributes inspector, in Xcode
 class RoundButton: UIButton {
@@ -37,6 +39,7 @@ struct TranslateResult: Codable {
 
 class TranslateVC: UIViewController, HistoryTVDelegateProtocol {
 
+
     @IBOutlet weak var inputTextField: UITextView!
     @IBOutlet weak var outputTextField: UITextView!
     @IBOutlet weak var vectorOutlet: UIButton!
@@ -48,8 +51,8 @@ class TranslateVC: UIViewController, HistoryTVDelegateProtocol {
     var fromLanguage = "ru"
     var toLanguage = "en"
     var rotateFlag = true
-    var dataArray = [""]
-    var delegatedLang: String?
+    var dataArray = [HasFavorite(value: "", favoriteFlag: false)]
+    var delegatedLang = ""
     var delegatedBookmarks = [""]
     var titleText = ""
     var timer = Timer()
@@ -58,10 +61,12 @@ class TranslateVC: UIViewController, HistoryTVDelegateProtocol {
     var countTranslations: Int? = nil
     var date: Int? = nil
     var myDate = Date(timeIntervalSinceNow: 7200)
+    var countDate = 0
 
     override func viewWillAppear(_ animated: Bool) {
         // navigationBar is hidden
         self.navigationController?.setNavigationBarHidden(true, animated: false)
+        self.navigationController?.setToolbarHidden(true, animated: false)
         let countTranslate = historyStorage.getCountTranslate()
         countTranslations = countTranslate
         timerSave.setTitle(prepareToView(), for: .normal)
@@ -91,6 +96,7 @@ class TranslateVC: UIViewController, HistoryTVDelegateProtocol {
             
         } else if monthInstall == month {
             result -= day - dayInstall
+            countDate = result
         }
         
         let translates = historyStorage.getCountTranslate()
@@ -99,6 +105,7 @@ class TranslateVC: UIViewController, HistoryTVDelegateProtocol {
 
     // arrow button to translate
     @IBAction func vectorButton(_ sender: UIButton) {
+        AudioServicesPlayAlertSound(SystemSoundID(1104))
         if rotateFlag {
             // rotate arrow backward on 180°
             UIView.animate(withDuration: 0.4, delay: 0, options: UIView.AnimationOptions.curveEaseIn, animations: { () -> Void in
@@ -155,6 +162,7 @@ class TranslateVC: UIViewController, HistoryTVDelegateProtocol {
 
     // do translate (RED Button)
     @IBAction func translateText(_ sender: UIButton) {
+        AudioServicesPlayAlertSound(SystemSoundID(1104))
         // remove whitespaces and newLine symbols from trailing and ... of the input string
         let inputText = inputTextField.text.trimmingCharacters(in: .whitespacesAndNewlines)
         if inputText != "" {
@@ -168,7 +176,7 @@ class TranslateVC: UIViewController, HistoryTVDelegateProtocol {
         requestResponseFunc(input: inputText)
         // read data from local storage and check input with this data on coincidence
         for historyWord in historyStorage.getHistory(lang: fromLanguage) {
-            guard historyWord != inputText else { return }
+            guard historyWord.value != inputText else { return }
         }
         // write data to local storage
         if inputText != "" {
@@ -206,7 +214,7 @@ class TranslateVC: UIViewController, HistoryTVDelegateProtocol {
                     self.outputTextField.text = "\(translate.text[0])"
                     // increment count translating and display it on the button
                     self.countTranslations! += 1
-                    self.timerSave.setTitle("6(\(self.countTranslations!))", for: UIControl.State.normal)
+                    self.timerSave.setTitle("\(String(describing: self.countDate))(\(self.countTranslations!))", for: UIControl.State.normal)
                 }
                 // stop timer and update counter for #selector of timer
                 self.timer.invalidate()
@@ -222,12 +230,13 @@ class TranslateVC: UIViewController, HistoryTVDelegateProtocol {
         return historyStorage.deleteHistory(at: language)
     }
     
-    func deleteBookmarks(at language: String) -> Int {
-        return historyStorage.deleteBookmarks(atLang: language)
+    func deleteBookmarks() {
+        return historyStorage.deleteBookmarks()
     }
     
     // "Russian" button
     @IBAction func ruButton(_ sender: RoundButton) {
+        AudioServicesPlayAlertSound(SystemSoundID(1104))
         dataArray = historyStorage.getHistory(lang: "ru")
         titleText = "История"
         delegatedLang = "ru"
@@ -238,6 +247,7 @@ class TranslateVC: UIViewController, HistoryTVDelegateProtocol {
     
     // "English" button
     @IBAction func enButton(_ sender: RoundButton) {
+        AudioServicesPlayAlertSound(SystemSoundID(1104))
         dataArray = historyStorage.getHistory(lang: "en")
         titleText = "History"
         delegatedLang = "en"
@@ -246,8 +256,10 @@ class TranslateVC: UIViewController, HistoryTVDelegateProtocol {
         }
     }
     
+    // "Bookmarks" button
     @IBAction func bookmarksButton(_ sender: RoundButton) {
-        dataArray = historyStorage.getBookmarks()
+        AudioServicesPlayAlertSound(SystemSoundID(1104))
+        self.dataArray = historyStorage.getBookmarks()
         titleText = "Bookmarks"
         DispatchQueue.main.async {
             self.performSegue(withIdentifier: "historySegue", sender: self)
@@ -256,6 +268,7 @@ class TranslateVC: UIViewController, HistoryTVDelegateProtocol {
     
     // input again to translate
     @IBAction func tryAgainButton(_ sender: RoundButton) {
+        AudioServicesPlayAlertSound(SystemSoundID(1104))
         // stop timer
         self.timer.invalidate()
         self.counter = 1

@@ -8,60 +8,47 @@
 
 import UIKit
 
-struct HasFavorite {
-    var value: String
-    var favoriteFlag: Bool
-}
-
-
 class HistoryCell: UITableViewCell {
-    
-    var storage: HistoryStorage!
-    var table = HistoryTableViewController()
-    var translateVC: TranslateVC!
-    var bookmarkFlag = false
-    var favoritesArray = [HasFavorite]()
+    let history = HistoryStorage()
+    let button = UIButton(type: .system)
+    var favorites = HasFavorite(value: "", favoriteFlag: false )
     
     override func awakeFromNib() {
         super.awakeFromNib()
     }
 
     // create "★"
-    func createStar() {
-        let button = UIButton(type: .system)
+    func createStar(tagButton: Int, favorites: HasFavorite, star: Bool) {
+        self.favorites = favorites
+        //let button = UIButton(type: .system)
         let image = UIImage(named: "LackyStar.png")
         button.setImage(image, for: .normal)
-        button.tintColor = #colorLiteral(red: 0.501960814, green: 0.501960814, blue: 0.501960814, alpha: 1)
+        if star {
+            button.tintColor = #colorLiteral(red: 0.1240676269, green: 0.2373861074, blue: 0.1056869999, alpha: 1)
+        } else {
+            button.tintColor = #colorLiteral(red: 0.5019258261, green: 0.5019868016, blue: 0.5018984675, alpha: 1)
+        }
         button.frame = CGRect(x: 0, y: 0, width: 20, height: 20)
+        print("Tag for each button: \(tagButton)")
+        button.tag = tagButton
+        print("Tag was button has: \(button.tag)")
         button.addTarget(self, action: #selector(starHandler), for: .touchUpInside)
         accessoryView = button
-        
-        for value in (table.delegate?.dataArray)! {
-            favoritesArray.append(HasFavorite(value: value, favoriteFlag: bookmarkFlag))
-        }
+
     }
-    
+
     // star selector handler
     @objc private func starHandler() {
-        bookmarkFlag = !bookmarkFlag
-        //let arrayWithData = table.delegate?.dataArray
-        let valueOfCell = table.valueOfCell(forCell: self, at: table.lang!)
-        
-        for (indx, favoriteVal) in favoritesArray.enumerated() {
-            if favoriteVal.value == valueOfCell {
-                favoritesArray[indx].favoriteFlag = bookmarkFlag
-            }
+        favorites.favoriteFlag = !favorites.favoriteFlag
+        button.tintColor = favorites.favoriteFlag ? #colorLiteral(red: 0.1240676269, green: 0.2373861074, blue: 0.1056869999, alpha: 1) : #colorLiteral(red: 0.5019258261, green: 0.5019868016, blue: 0.5018984675, alpha: 1)
+            print("bla bla bla \(button.tag)")
+        print(favorites)
+
+
+
+        DispatchQueue.main.async {
+            self.history.setBookmark(forValue: self.favorites.value, bookmark: self.favorites.favoriteFlag)
         }
-        
-        print("------------------------")
-        for indx in favoritesArray {
-            print(indx.value, indx.favoriteFlag)
-        }
-        
-        for bookmark in storage.getBookmarks() {
-            guard bookmark != valueOfCell else { return }
-        }
-        storage.setBookmark(forValue: valueOfCell , at: "")
     }
 }
 

@@ -65,10 +65,12 @@ public class HistoryStorage {
         if lang == "ru" {
             historyNewItem.setValue(data, forKey: "ru")
             historyNewItem.setValue(ruID, forKey: "ruID")
+            historyNewItem.setValue(false, forKey: "bookmark")
             ruID! += 1
         } else if lang == "en" {
             historyNewItem.setValue(data, forKey: "en")
             historyNewItem.setValue(enID, forKey: "enID")
+            historyNewItem.setValue(false, forKey: "bookmark")
             enID! += 1
         }
         
@@ -80,22 +82,22 @@ public class HistoryStorage {
    }
     
     // Retrieve Data from storage
-    public func getHistory(lang: String) -> [String] {
-        guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else { return ["Error"] }
+     func getHistory(lang: String) -> [HasFavorite] {
+        guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else { return [HasFavorite]() }
         let managedContext = appDelegate.persistentContainer.viewContext
         let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "History")
-        var historyArr = [String]()
+        var historyArr = [HasFavorite]()
         
         do {
             let result = try managedContext.fetch(fetchRequest)
             for data in result as! [NSManagedObject] {
                 if lang == "ru" {
                     if data.value(forKey: "ru") as? String != nil {
-                        historyArr.append(data.value(forKey: "ru") as! String)
+                        historyArr.append(HasFavorite(value: data.value(forKey: "ru") as! String , favoriteFlag: data.value(forKey: "bookmark") as! Bool))
                     }
                 } else if lang == "en" {
                     if data.value(forKey: "en") as? String != nil {
-                        historyArr.append(data.value(forKey: "en") as! String)
+                        historyArr.append(HasFavorite(value: data.value(forKey: "en") as! String, favoriteFlag: data.value(forKey: "bookmark") as! Bool))
                     }
                 }
             }
@@ -172,20 +174,24 @@ public class HistoryStorage {
         return counter
     }
     
-    public func setBookmark(forValue cellString: String, at lang: String) {
+    public func setBookmark(forValue cellString: String, bookmark: Bool) {
         guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else { return }
         let managedContext = appDelegate.persistentContainer.viewContext
-        let ruBookmarksEntity = NSEntityDescription.entity(forEntityName: "RuBookmarks", in: managedContext)!
-        let enBookmarksEntity = NSEntityDescription.entity(forEntityName: "EnBookmarks", in: managedContext)!
-        let newRuBookmark = NSManagedObject(entity: ruBookmarksEntity, insertInto: managedContext)
-        let newEnBookmark = NSManagedObject(entity: enBookmarksEntity, insertInto: managedContext)
-        
-        if lang == "ru" {
-            newRuBookmark.setValue(String(cellString), forKey: "bookmark")
-        } else if lang == "en" {
-            newEnBookmark.setValue(String(cellString), forKey: "bookmark")
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "History")
+        do {
+            let result = try managedContext.fetch(fetchRequest)
+            for data in result as! [NSManagedObject] {
+                if data.value(forKey: "ru") as? String == cellString {
+                    data.setValue(bookmark, forKey: "bookmark")
+                } else if data.value(forKey: "en") as? String == cellString {
+                    data.setValue(bookmark, forKey: "bookmark")
+                }
+            }
+        } catch {
+            print("")
         }
         
+
         do {
             try managedContext.save()
         } catch {
@@ -194,19 +200,20 @@ public class HistoryStorage {
         
     }
     
-    
-    func getBookmarks() -> [String] {
+
+    func getBookmarks() -> [HasFavorite] {
         guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else { return [] }
         let managedContext = appDelegate.persistentContainer.viewContext
-        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "RuBookmarks")
-        var bookmarksArray = [String]()
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "History")
+        var bookmarksArray = [HasFavorite]()
         
         do {
-            let bookmarkTable = try managedContext.fetch(fetchRequest)
-            for bookmarkRow in bookmarkTable as! [NSManagedObject] {
-                if let bookmark = bookmarkRow.value(forKey: "bookmark") {
-                    bookmarksArray.append(bookmark as! String)
-                }
+            let result = try managedContext.fetch(fetchRequest)
+            for data in result as! [NSManagedObject] {
+                if data.value(forKey: "bookmark") as? Bool == true && data.value(forKey: "ru") != nil{
+                    bookmarksArray.append(HasFavorite(value: data.value(forKey: "ru") as! String, favoriteFlag: data.value(forKey: "bookmark") as! Bool ))
+                } else if data.value(forKey: "bookmark") as? Bool == true && data.value(forKey: "en") != nil {
+                    bookmarksArray.append(HasFavorite(value: data.value(forKey: "en") as! String, favoriteFlag: data.value(forKey: "bookmark") as! Bool ))                }
             }
         } catch {
             print(error)
@@ -214,43 +221,27 @@ public class HistoryStorage {
         return bookmarksArray
     }
 
-    func deleteBookmarks(atLang lang: String) -> Int {
-        guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else { return 0 }
+    func deleteBookmarks(){
+        guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else { return }
         let managedContext = appDelegate.persistentContainer.viewContext
-        let fetchRu = NSFetchRequest<NSFetchRequestResult>(entityName: "RuBookmarks")
-        let fetchEn = NSFetchRequest<NSFetchRequestResult>(entityName: "EnBookmarks")
-        let requestRu = NSBatchDeleteRequest(fetchRequest: fetchRu)
-        let requestEn = NSBatchDeleteRequest(fetchRequest: fetchEn)
-        var counterOfBookmarks = -1
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "History")
+        do {
+            let result = try managedContext.fetch(fetchRequest)
+            for data in result as! [NSManagedObject] {
+                data.setValue(false, forKey: "bookmark")
+            }
+        } catch {
+            print("")
+        }
+
 
         do {
-            let ruBookmarksTable = try managedContext.fetch(fetchRu)
-            let enBookmarksTable = try managedContext.fetch(fetchEn)
-            
-            if lang == "ru" {
-                for _ in ruBookmarksTable as! [NSManagedObject] {
-                    counterOfBookmarks += 1
-                }
-                try managedContext.execute(requestRu)
-            } else if lang == "en" {
-                for _ in enBookmarksTable as! [NSManagedObject] {
-                    counterOfBookmarks += 1
-                }
-                try managedContext.execute(requestEn)
-            }
-            
-            do {
-                try managedContext.save()
-            } catch {
-                print(error)
-            }
-            
+            try managedContext.save()
         } catch {
             print(error)
         }
-        return counterOfBookmarks
     }
-    
+
 }
 
 

@@ -8,36 +8,41 @@
 
 import UIKit
 
+struct HasFavorite {
+    var value: String
+    var favoriteFlag: Bool
+}
+
 protocol HistoryTVDelegateProtocol {
     func deleteHistory(at: String) -> Int
-    func deleteBookmarks(at: String) -> Int
-    var dataArray: [String] { get set }
-    var delegatedLang: String? { get }
+    func deleteBookmarks()
+    var dataArray: [HasFavorite] { get set }
+    var delegatedLang: String { get }
     var titleText: String { get }
 }
 
-
 class HistoryTableViewController: UITableViewController {
-    
-    // delegate protocol
     var delegate: HistoryTVDelegateProtocol?
-    var historyOrBookmarksArr = [String]()
+    var historyArray = [HasFavorite]()
     var sumOfDeletedItems = 0
     var flagOfDelete = false
     var flagHistoryIsDelete = true
     var instanceHistoryStorage = HistoryStorage()
     var lang: String?
-    
+
+
+    var digitCounts = Array(repeating: 0, count: 10)
+
     override func viewDidLoad() {
         super.viewDidLoad()
         // navigation bar is hidden
         self.navigationController?.setNavigationBarHidden(false, animated: false)
         
         lang = delegate?.delegatedLang
-        if lang != nil {
             // Arr of history
-            historyOrBookmarksArr = delegate!.dataArray
-        }
+            historyArray = delegate!.dataArray
+        
+        
         // TableView color
         self.tableView.backgroundColor = #colorLiteral(red: 0.6234219074, green: 0.6068384647, blue: 0.4118421078, alpha: 1)
         self.tableView.separatorColor = #colorLiteral(red: 0.2898159898, green: 0.2831504534, blue: 0.193671386, alpha: 1)
@@ -48,14 +53,7 @@ class HistoryTableViewController: UITableViewController {
     }
     
     override func viewWillAppear(_ animated: Bool) {
-
-    }
-   
-    // create index of cell for HistoryCell
-    func valueOfCell(forCell: UITableViewCell, at lang: String) -> String {
-        let indexPathTapped = tableView.indexPath(for: forCell)
-        let cellValue = delegate!.dataArray[indexPathTapped!.row]
-        return cellValue
+        self.navigationController?.setToolbarHidden(false, animated: false)
     }
     
     // trash button
@@ -88,12 +86,12 @@ class HistoryTableViewController: UITableViewController {
             self.present(alert, animated: true)
         }
         
-        if title == "Bookmarks" && delegate?.dataArray != [] {
+        if title == "Bookmarks" && delegate?.dataArray.count ?? 0 > 0 {
             let alertController = UIAlertController(title: "Delete All Bookmarks!", message: "", preferredStyle: .alert)
             alertController.addAction(UIAlertAction(title: "Yes", style: .default, handler: { action in self.trashAlertAction() }))
             alertController.addAction(UIAlertAction(title: "No", style: .cancel, handler: nil))
             self.present(alertController, animated: true)
-            delegate?.dataArray = []
+            delegate?.dataArray = [HasFavorite]()
         }
     }
     
@@ -101,7 +99,8 @@ class HistoryTableViewController: UITableViewController {
     func trashAlertAction() {
         if title == "Bookmarks" {
             // gets the number of deleted bookmarks items from the storage
-            sumOfDeletedItems = (delegate?.deleteBookmarks(at: (delegate?.delegatedLang)!))!
+            delegate?.deleteBookmarks()
+            sumOfDeletedItems = historyArray.count - 1
         } else {
             // gets the number of deleted history items from the storage
             sumOfDeletedItems = (delegate?.deleteHistory(at: (delegate?.delegatedLang)!))!
@@ -125,24 +124,36 @@ class HistoryTableViewController: UITableViewController {
         // clear array of history
         delegate?.dataArray = []
     }
-    
+
+
+    // create index of cell for HistoryCell
+    func valueOfCell(forCell: UITableViewCell, at lang: String) -> String {
+        let indexPathTapped = tableView.indexPath(for: forCell)
+        let cellValue = delegate!.dataArray[indexPathTapped!.row]
+        return cellValue.value
+    }
+
     
     // MARK: - Table view data source
     // rows in section
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return historyOrBookmarksArr.count
+        return historyArray.count
     }
     // create a Cell
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath) as! HistoryCell
-        cell.storage = instanceHistoryStorage
-        cell.table = self
-        
+
         if !flagOfDelete {
-            cell.textLabel?.text = historyOrBookmarksArr[indexPath.row]
-            cell.createStar()
+            cell.textLabel?.text = historyArray[indexPath.row].value
+            cell.createStar(tagButton: indexPath.row, favorites: HasFavorite(value: historyArray[indexPath.row].value, favoriteFlag: historyArray[indexPath.row].favoriteFlag), star: historyArray[indexPath.row].favoriteFlag)
         }
         return cell
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+
+        //print(historyCell.favoritesArray)
     }
     
 }
