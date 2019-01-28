@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="14460.30.1" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="1Yu-NJ-oNe">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="14460.31" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="1Yu-NJ-oNe">
     <device id="retina4_0" orientation="portrait">
         <adaptation id="fullscreen"/>
     </device>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14460.19.1"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14460.20"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -286,16 +286,16 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="372" y="116.49175412293854"/>
+            <point key="canvasLocation" x="371.25" y="116.19718309859155"/>
         </scene>
-        <!--en / ru-->
+        <!--Title-->
         <scene sceneID="wKH-Hd-EM1">
             <objects>
                 <tableViewController id="m14-ss-fGT" customClass="HistoryTableViewController" customModule="OnlineTranslator" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" id="ypG-AM-Gdk">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <color key="backgroundColor" red="0.62342190742492676" green="0.60683846473693848" blue="0.41184210777282715" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <color key="separatorColor" red="0.72053458121827418" green="0.70396286105476102" blue="0.48150183520909012" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <color key="sectionIndexBackgroundColor" red="0.62342190742492676" green="0.60683846473693848" blue="0.41184210777282715" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <prototypes>
@@ -314,13 +314,25 @@
                             <outlet property="delegate" destination="m14-ss-fGT" id="uSl-K9-Khu"/>
                         </connections>
                     </tableView>
-                    <navigationItem key="navigationItem" title="en / ru" leftItemsSupplementBackButton="YES" id="kqm-GU-Ltx">
-                        <barButtonItem key="rightBarButtonItem" systemItem="trash" id="ICM-cw-Dqr">
+                    <tabBarItem key="tabBarItem" title="Item" id="KFq-6g-bBg"/>
+                    <toolbarItems>
+                        <barButtonItem style="plain" systemItem="flexibleSpace" id="d7j-0Q-4fh"/>
+                        <barButtonItem title="Ru / En" id="gDz-S2-dUG">
+                            <color key="tintColor" red="0.72554916143417358" green="0.70754557847976685" blue="0.040933303534984589" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                             <connections>
-                                <action selector="trash:" destination="m14-ss-fGT" id="Hz4-5z-uZI"/>
+                                <action selector="ruEnToolbarButton:" destination="m14-ss-fGT" id="Ktg-lS-USi"/>
+                            </connections>
+                        </barButtonItem>
+                        <barButtonItem style="plain" systemItem="flexibleSpace" id="UHc-6B-vb6"/>
+                    </toolbarItems>
+                    <navigationItem key="navigationItem" title="Title" id="gTr-bY-Gw9">
+                        <barButtonItem key="rightBarButtonItem" systemItem="trash" id="1Or-SN-Pkf">
+                            <connections>
+                                <action selector="trash:" destination="m14-ss-fGT" id="1ez-IX-SDl"/>
                             </connections>
                         </barButtonItem>
                     </navigationItem>
+                    <simulatedToolbarMetrics key="simulatedBottomBarMetrics"/>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Rzc-eI-nrb" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
@@ -329,21 +341,24 @@
         <!--Navigation Controller-->
         <scene sceneID="dF1-VY-fRD">
             <objects>
-                <navigationController automaticallyAdjustsScrollViewInsets="NO" toolbarHidden="NO" id="1Yu-NJ-oNe" sceneMemberID="viewController">
-                    <toolbarItems/>
+                <navigationController automaticallyAdjustsScrollViewInsets="NO" id="1Yu-NJ-oNe" sceneMemberID="viewController">
+                    <toolbarItems>
+                        <barButtonItem title="Item" id="Yvu-37-G3K"/>
+                    </toolbarItems>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="T2r-81-a2H">
                         <rect key="frame" x="0.0" y="20" width="320" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
-                        <color key="backgroundColor" red="0.042494215071201324" green="0.17855408787727356" blue="0.018743094056844711" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                        <color key="backgroundColor" red="0.62342190742492676" green="0.60683846473693848" blue="0.41184210777282715" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <color key="barTintColor" red="0.042494215071201324" green="0.17855408787727356" blue="0.018743094056844711" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <textAttributes key="titleTextAttributes">
                             <color key="textColor" red="0.7268004441624365" green="0.70773688005189783" blue="0.048529711825218314" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         </textAttributes>
                     </navigationBar>
                     <nil name="viewControllers"/>
-                    <toolbar key="toolbar" opaque="NO" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="4Ot-T6-kzP">
-                        <rect key="frame" x="0.0" y="524" width="320" height="44"/>
+                    <toolbar key="toolbar" opaque="NO" clearsContextBeforeDrawing="NO" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" barStyle="black" id="4Ot-T6-kzP">
                         <autoresizingMask key="autoresizingMask"/>
+                        <color key="backgroundColor" red="0.042494215071201324" green="0.17855408787727356" blue="0.018743094056844711" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                        <color key="tintColor" red="0.042494215071201324" green="0.17855408787727356" blue="0.018743094056844711" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <color key="barTintColor" red="0.13208669424057007" green="0.24908739328384399" blue="0.11333227902650833" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                     </toolbar>
                     <connections>

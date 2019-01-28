@@ -84,7 +84,7 @@ class TranslateVC: UIViewController, HistoryTVDelegateProtocol {
         let urlToDocumentsFolder = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).last!
         //installDate is NSDate of install
         let installDate = (try! FileManager.default.attributesOfItem(atPath: urlToDocumentsFolder.path)[FileAttributeKey.creationDate])
-        print("This app was installed by the user on \(String(describing: installDate))")
+        //print("This app was installed by the user on \(String(describing: installDate))")
         print("This is date now: \(myDate)")
         var result = 6
         let calendar = Calendar.current
@@ -178,10 +178,6 @@ class TranslateVC: UIViewController, HistoryTVDelegateProtocol {
         for historyWord in historyStorage.getHistory(lang: fromLanguage) {
             guard historyWord.value != inputText else { return }
         }
-        // write data to local storage
-        if inputText != "" {
-            historyStorage.createData(from: inputText, at: fromLanguage)
-        }
     }
     
     // request/response func declaration
@@ -216,6 +212,12 @@ class TranslateVC: UIViewController, HistoryTVDelegateProtocol {
                     self.countTranslations! += 1
                     self.timerSave.setTitle("\(String(describing: self.countDate))(\(self.countTranslations!))", for: UIControl.State.normal)
                 }
+                // save history
+                // write data to local storage
+                if inputText != "" {
+                    self.historyStorage.createData(from: self.inputTextField.text, at: self.fromLanguage)
+                }
+
                 // stop timer and update counter for #selector of timer
                 self.timer.invalidate()
                 self.counter = 1

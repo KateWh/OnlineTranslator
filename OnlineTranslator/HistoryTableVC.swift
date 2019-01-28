@@ -18,30 +18,36 @@ protocol HistoryTVDelegateProtocol {
     func deleteBookmarks()
     var dataArray: [HasFavorite] { get set }
     var delegatedLang: String { get }
-    var titleText: String { get }
+    var titleText: String { get set }
 }
 
 class HistoryTableViewController: UITableViewController {
+    
+    
+
     var delegate: HistoryTVDelegateProtocol?
     var historyArray = [HasFavorite]()
     var sumOfDeletedItems = 0
     var flagOfDelete = false
+    var flagOfRuEnBookmarks = false
     var flagHistoryIsDelete = true
     var instanceHistoryStorage = HistoryStorage()
     var lang: String?
-
-
     var digitCounts = Array(repeating: 0, count: 10)
+    var ruBookmarksArray = [HasFavorite]()
+    var enBookmarksArray = [HasFavorite]()
+    
 
+    
     override func viewDidLoad() {
         super.viewDidLoad()
+        
         // navigation bar is hidden
         self.navigationController?.setNavigationBarHidden(false, animated: false)
-        
+
         lang = delegate?.delegatedLang
-            // Arr of history
+            // create Arr of history
             historyArray = delegate!.dataArray
-        
         
         // TableView color
         self.tableView.backgroundColor = #colorLiteral(red: 0.6234219074, green: 0.6068384647, blue: 0.4118421078, alpha: 1)
@@ -51,9 +57,15 @@ class HistoryTableViewController: UITableViewController {
         // title for history
         self.title = delegate!.titleText
     }
-    
+
     override func viewWillAppear(_ animated: Bool) {
-        self.navigationController?.setToolbarHidden(false, animated: false)
+        super.viewWillAppear(animated)
+        if delegate?.titleText != "Bookmarks" {
+            self.navigationController?.toolbar.isHidden = true
+        } else {
+            self.navigationController?.setToolbarHidden(false, animated: false)
+        }
+        
     }
     
     // trash button
@@ -125,6 +137,74 @@ class HistoryTableViewController: UITableViewController {
         delegate?.dataArray = []
     }
 
+    // Toolbar botton to change Ru/En bookmarks
+    @IBAction func ruEnToolbarButton(_ sender: UIBarButtonItem) {
+        flagOfRuEnBookmarks = !flagOfRuEnBookmarks
+        // create En and Ru bookmarks arrays
+        for historyItem in historyArray {
+            for (_ , unicode) in historyItem.value.first!.unicodeScalars.enumerated() {
+                // check cyrillic diapasone
+                if (unicode.value < 1024 || unicode.value > 1279) {
+                    enBookmarksArray.append(historyItem)
+                } else {
+                    ruBookmarksArray.append(historyItem)
+                }
+            }
+        }
+        
+        // prepare to update En bookmarks
+        if !flagOfRuEnBookmarks {
+            var index = [IndexPath]()
+            // create IndexPath for tableView rows
+            for (indx, _) in enBookmarksArray.enumerated() {
+                let indexPath = IndexPath(row: indx, section: 0)
+                index.append(indexPath)
+            }
+            // checking, how many rows need to delete on reverse motion
+            if index.count < ruBookmarksArray.count {
+                let difference = (ruBookmarksArray.count - 1) - index.count
+                for _ in 0...difference {
+                    if index.count != 0 {
+                        index.append(IndexPath(row: index.max()!.row + 1, section: 0))
+                    } else {
+                        index.append(IndexPath(row: 0, section: 0))
+                    }
+                    enBookmarksArray.append(HasFavorite(value: "", favoriteFlag: false))
+                }
+            }
+            // reload rows and clear Ru/En bookmarks arrays then
+            tableView.reloadRows(at: index, with: .right)
+            enBookmarksArray = []
+            ruBookmarksArray = []
+        }
+        
+        // prepare to update Ru bookmarks
+        if flagOfRuEnBookmarks {
+            var index = [IndexPath]()
+            for (indx, _) in ruBookmarksArray.enumerated() {
+                let indexPath = IndexPath(row: indx, section: 0)
+                index.append(indexPath)
+            }
+            // checking, how many rows need to delete on reverse motion
+            if index.count < enBookmarksArray.count {
+                let difference = (enBookmarksArray.count - 1) - index.count
+                for _ in 0...difference {
+                    if index.count != 0 {
+                        index.append(IndexPath(row: index.max()!.row + 1, section: 0))
+                    } else {
+                        index.append(IndexPath(row: 0, section: 0))
+                    }
+                    ruBookmarksArray.append(HasFavorite(value: "", favoriteFlag: false))
+                }
+                    
+            }
+            // reload rows and lcear Ru/En bookmarks arrays then
+            tableView.reloadRows(at: index, with: .left)
+            ruBookmarksArray = []
+            enBookmarksArray = []
+        }
+        
+    }
 
     // create index of cell for HistoryCell
     func valueOfCell(forCell: UITableViewCell, at lang: String) -> String {
@@ -143,17 +223,22 @@ class HistoryTableViewController: UITableViewController {
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath) as! HistoryCell
 
-        if !flagOfDelete {
+        // print history
+        if !flagOfDelete && delegate?.titleText != "Bookmarks" {
             cell.textLabel?.text = historyArray[indexPath.row].value
             cell.createStar(tagButton: indexPath.row, favorites: HasFavorite(value: historyArray[indexPath.row].value, favoriteFlag: historyArray[indexPath.row].favoriteFlag), star: historyArray[indexPath.row].favoriteFlag)
         }
-        return cell
-    }
-    
-    override func viewWillDisappear(_ animated: Bool) {
-        super.viewWillDisappear(animated)
 
-        //print(historyCell.favoritesArray)
+        // print only English bookmarks
+        if !enBookmarksArray.isEmpty && !flagOfRuEnBookmarks {
+            cell.textLabel?.text = enBookmarksArray[indexPath.row].value
+        }
+        // print only Russian bookmarks
+        if !ruBookmarksArray.isEmpty && flagOfRuEnBookmarks {
+            cell.textLabel?.text = ruBookmarksArray[indexPath.row].value
+        }
+
+        return cell
     }
     
 }

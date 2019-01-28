@@ -15,13 +15,16 @@
 		5828806721CAD3600034C4B2 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5828806521CAD3600034C4B2 /* LaunchScreen.storyboard */; };
 		5828807221CAD3600034C4B2 /* OnlineTranslatorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5828807121CAD3600034C4B2 /* OnlineTranslatorTests.swift */; };
 		5828807D21CAD3600034C4B2 /* OnlineTranslatorUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5828807C21CAD3600034C4B2 /* OnlineTranslatorUITests.swift */; };
+		582B9D9121FE38DF0048AA16 /* GoldStar.png in Resources */ = {isa = PBXBuildFile; fileRef = 582B9D9021FE38DF0048AA16 /* GoldStar.png */; };
+		582B9D9521FE5D7D0048AA16 /* RuEn.png in Resources */ = {isa = PBXBuildFile; fileRef = 582B9D9421FE5D7D0048AA16 /* RuEn.png */; };
+		582B9D9721FF213F0048AA16 /* RuEn1.png in Resources */ = {isa = PBXBuildFile; fileRef = 582B9D9621FF213F0048AA16 /* RuEn1.png */; };
+		582B9D9921FF24090048AA16 /* RuEn2.png in Resources */ = {isa = PBXBuildFile; fileRef = 582B9D9821FF24090048AA16 /* RuEn2.png */; };
 		5843D9B121DCF6190039C969 /* light-vector.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 5843D9B021DCF6190039C969 /* light-vector.jpg */; };
 		5851DC7421DFCE5C0097DA71 /* HistoryStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5851DC7321DFCE5C0097DA71 /* HistoryStorage.swift */; };
 		5851DC7721DFD1330097DA71 /* OnlineTranslator.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 5851DC7521DFD1330097DA71 /* OnlineTranslator.xcdatamodeld */; };
 		5851DC7921DFD74A0097DA71 /* HistoryTableVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5851DC7821DFD74A0097DA71 /* HistoryTableVC.swift */; };
 		58C6399B21EE2F9E006CD09D /* HistoryCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 58C6399A21EE2F9E006CD09D /* HistoryCell.swift */; };
-		58E6868D21FA43D50026AFB9 /* big_vector.png in Resources */ = {isa = PBXBuildFile; fileRef = 58E6868C21FA43D50026AFB9 /* big_vector.png */; };
-		C650592421FCD2F20002CE55 /* Structures.swift in Sources */ = {isa = PBXBuildFile; fileRef = C650592321FCD2F20002CE55 /* Structures.swift */; };
+		58E6868D21FA43D50026AFB9 /* Big_vector.png in Resources */ = {isa = PBXBuildFile; fileRef = 58E6868C21FA43D50026AFB9 /* Big_vector.png */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -56,13 +59,16 @@
 		5828807821CAD3600034C4B2 /* OnlineTranslatorUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = OnlineTranslatorUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		5828807C21CAD3600034C4B2 /* OnlineTranslatorUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnlineTranslatorUITests.swift; sourceTree = "<group>"; };
 		5828807E21CAD3600034C4B2 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		582B9D9021FE38DF0048AA16 /* GoldStar.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = GoldStar.png; sourceTree = "<group>"; };
+		582B9D9421FE5D7D0048AA16 /* RuEn.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = RuEn.png; sourceTree = "<group>"; };
+		582B9D9621FF213F0048AA16 /* RuEn1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = RuEn1.png; sourceTree = "<group>"; };
+		582B9D9821FF24090048AA16 /* RuEn2.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = RuEn2.png; sourceTree = "<group>"; };
 		5843D9B021DCF6190039C969 /* light-vector.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = "light-vector.jpg"; sourceTree = "<group>"; };
 		5851DC7321DFCE5C0097DA71 /* HistoryStorage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoryStorage.swift; sourceTree = "<group>"; };
 		5851DC7621DFD1330097DA71 /* OnlineTranslator.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = OnlineTranslator.xcdatamodel; sourceTree = "<group>"; };
 		5851DC7821DFD74A0097DA71 /* HistoryTableVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoryTableVC.swift; sourceTree = "<group>"; };
 		58C6399A21EE2F9E006CD09D /* HistoryCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoryCell.swift; sourceTree = "<group>"; };
-		58E6868C21FA43D50026AFB9 /* big_vector.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = big_vector.png; sourceTree = "<group>"; };
-		C650592321FCD2F20002CE55 /* Structures.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Structures.swift; sourceTree = "<group>"; };
+		58E6868C21FA43D50026AFB9 /* Big_vector.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Big_vector.png; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -116,7 +122,6 @@
 				5860793821DB848000B623D7 /* Images */,
 				5828805921CAD35D0034C4B2 /* AppDelegate.swift */,
 				5851DC7321DFCE5C0097DA71 /* HistoryStorage.swift */,
-				C650592321FCD2F20002CE55 /* Structures.swift */,
 				5828805B21CAD35D0034C4B2 /* TranslateVC.swift */,
 				5851DC7821DFD74A0097DA71 /* HistoryTableVC.swift */,
 				58C6399A21EE2F9E006CD09D /* HistoryCell.swift */,
@@ -150,7 +155,11 @@
 		5860793821DB848000B623D7 /* Images */ = {
 			isa = PBXGroup;
 			children = (
-				58E6868C21FA43D50026AFB9 /* big_vector.png */,
+				582B9D9821FF24090048AA16 /* RuEn2.png */,
+				582B9D9621FF213F0048AA16 /* RuEn1.png */,
+				582B9D9421FE5D7D0048AA16 /* RuEn.png */,
+				582B9D9021FE38DF0048AA16 /* GoldStar.png */,
+				58E6868C21FA43D50026AFB9 /* Big_vector.png */,
 				5823F08E21EE717900B70821 /* LackyStar.png */,
 				5843D9B021DCF6190039C969 /* light-vector.jpg */,
 			);
@@ -262,11 +271,15 @@
 			buildActionMask = 2147483647;
 			files = (
 				5823F08F21EE717900B70821 /* LackyStar.png in Resources */,
+				582B9D9721FF213F0048AA16 /* RuEn1.png in Resources */,
 				5828806721CAD3600034C4B2 /* LaunchScreen.storyboard in Resources */,
 				5828805F21CAD35D0034C4B2 /* Main.storyboard in Resources */,
+				582B9D9921FF24090048AA16 /* RuEn2.png in Resources */,
 				5823F08B21EE6E8600B70821 /* Media.xcassets in Resources */,
 				5843D9B121DCF6190039C969 /* light-vector.jpg in Resources */,
-				58E6868D21FA43D50026AFB9 /* big_vector.png in Resources */,
+				582B9D9121FE38DF0048AA16 /* GoldStar.png in Resources */,
+				582B9D9521FE5D7D0048AA16 /* RuEn.png in Resources */,
+				58E6868D21FA43D50026AFB9 /* Big_vector.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -294,7 +307,6 @@
 				58C6399B21EE2F9E006CD09D /* HistoryCell.swift in Sources */,
 				5851DC7721DFD1330097DA71 /* OnlineTranslator.xcdatamodeld in Sources */,
 				5828805C21CAD35D0034C4B2 /* TranslateVC.swift in Sources */,
-				C650592421FCD2F20002CE55 /* Structures.swift in Sources */,
 				5851DC7421DFCE5C0097DA71 /* HistoryStorage.swift in Sources */,
 				5828805A21CAD35D0034C4B2 /* AppDelegate.swift in Sources */,
 				5851DC7921DFD74A0097DA71 /* HistoryTableVC.swift in Sources */,
@@ -473,13 +485,13 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = GC8SPUUSA6;
+				DEVELOPMENT_TEAM = 45JNFF5WM9;
 				INFOPLIST_FILE = OnlineTranslator/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = ket.team.OnlineTranslator;
+				PRODUCT_BUNDLE_IDENTIFIER = vit.team.OnlineTranslator;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 4.2;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -491,13 +503,13 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = GC8SPUUSA6;
+				DEVELOPMENT_TEAM = 45JNFF5WM9;
 				INFOPLIST_FILE = OnlineTranslator/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = ket.team.OnlineTranslator;
+				PRODUCT_BUNDLE_IDENTIFIER = vit.team.OnlineTranslator;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 4.2;
 				TARGETED_DEVICE_FAMILY = "1,2";
