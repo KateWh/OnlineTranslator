@@ -17,6 +17,8 @@ protocol HistoryTVDelegateProtocol {
     func deleteHistory(at: String) -> Int
     func deleteBookmarks()
     var dataArray: [HasFavorite] { get set }
+    var bookmarksRU: [HasFavorite] { get set }
+    var bookmarksEN: [HasFavorite] { get set }
     var delegatedLang: String { get }
     var titleText: String { get set }
 }
@@ -65,6 +67,8 @@ class HistoryTableViewController: UITableViewController {
         } else {
             self.navigationController?.setToolbarHidden(false, animated: false)
         }
+        ruBookmarksArray = delegate?.bookmarksRU ?? [HasFavorite]()
+        enBookmarksArray = delegate?.bookmarksEN ?? [HasFavorite]()
         
     }
     
@@ -137,7 +141,8 @@ class HistoryTableViewController: UITableViewController {
         delegate?.dataArray = []
     }
 
-    // Toolbar botton to change Ru/En bookmarks
+    /*
+     // Toolbar botton to change Ru/En bookmarks
     @IBAction func ruEnToolbarButton(_ sender: UIBarButtonItem) {
         flagOfRuEnBookmarks = !flagOfRuEnBookmarks
         // create En and Ru bookmarks arrays
@@ -205,6 +210,7 @@ class HistoryTableViewController: UITableViewController {
         }
         
     }
+     */
 
     // create index of cell for HistoryCell
     func valueOfCell(forCell: UITableViewCell, at lang: String) -> String {
@@ -229,15 +235,16 @@ class HistoryTableViewController: UITableViewController {
             cell.createStar(tagButton: indexPath.row, favorites: HasFavorite(value: historyArray[indexPath.row].value, favoriteFlag: historyArray[indexPath.row].favoriteFlag), star: historyArray[indexPath.row].favoriteFlag)
         }
 
-        // print only English bookmarks
-        if !enBookmarksArray.isEmpty && !flagOfRuEnBookmarks {
+       // print only English bookmarks
+        if lang == "en" && delegate?.titleText == "Bookmarks" {
             cell.textLabel?.text = enBookmarksArray[indexPath.row].value
+            cell.createStar(tagButton: indexPath.row, favorites: HasFavorite(value: enBookmarksArray[indexPath.row].value, favoriteFlag: enBookmarksArray[indexPath.row].favoriteFlag), star: enBookmarksArray[indexPath.row].favoriteFlag)
         }
         // print only Russian bookmarks
-        if !ruBookmarksArray.isEmpty && flagOfRuEnBookmarks {
+        if lang == "ru" && delegate?.titleText == "Bookmarks" {
             cell.textLabel?.text = ruBookmarksArray[indexPath.row].value
+            cell.createStar(tagButton: indexPath.row, favorites: HasFavorite(value: ruBookmarksArray[indexPath.row].value, favoriteFlag: ruBookmarksArray[indexPath.row].favoriteFlag), star: ruBookmarksArray[indexPath.row].favoriteFlag)
         }
-
         return cell
     }
     

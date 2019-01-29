@@ -62,6 +62,8 @@ class TranslateVC: UIViewController, HistoryTVDelegateProtocol {
     var date: Int? = nil
     var myDate = Date(timeIntervalSinceNow: 7200)
     var countDate = 0
+    var bookmarksRU = [HasFavorite]()
+    var bookmarksEN = [HasFavorite]()
 
     override func viewWillAppear(_ animated: Bool) {
         // navigationBar is hidden
@@ -261,8 +263,10 @@ class TranslateVC: UIViewController, HistoryTVDelegateProtocol {
     // "Bookmarks" button
     @IBAction func bookmarksButton(_ sender: RoundButton) {
         AudioServicesPlayAlertSound(SystemSoundID(1104))
-        self.dataArray = historyStorage.getBookmarks()
+        bookmarksRU = historyStorage.getBookmarks(lang: "ru")
+        bookmarksEN = historyStorage.getBookmarks(lang: "en")
         titleText = "Bookmarks"
+        delegatedLang = "en"
         DispatchQueue.main.async {
             self.performSegue(withIdentifier: "historySegue", sender: self)
         }

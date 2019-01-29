@@ -201,7 +201,7 @@ public class HistoryStorage {
     }
     
 
-    func getBookmarks() -> [HasFavorite] {
+    func getBookmarks(lang: String ) -> [HasFavorite] {
         guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else { return [] }
         let managedContext = appDelegate.persistentContainer.viewContext
         let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "History")
@@ -210,10 +210,9 @@ public class HistoryStorage {
         do {
             let result = try managedContext.fetch(fetchRequest)
             for data in result as! [NSManagedObject] {
-                if data.value(forKey: "bookmark") as? Bool == true && data.value(forKey: "ru") != nil{
-                    bookmarksArray.append(HasFavorite(value: data.value(forKey: "ru") as! String, favoriteFlag: data.value(forKey: "bookmark") as! Bool ))
-                } else if data.value(forKey: "bookmark") as? Bool == true && data.value(forKey: "en") != nil {
-                    bookmarksArray.append(HasFavorite(value: data.value(forKey: "en") as! String, favoriteFlag: data.value(forKey: "bookmark") as! Bool ))                }
+                if data.value(forKey: "bookmark") as? Bool == true && data.value(forKey: lang ) != nil{
+                    bookmarksArray.append(HasFavorite(value: data.value(forKey: lang ) as! String, favoriteFlag: data.value(forKey: "bookmark") as! Bool ))
+                }
             }
         } catch {
             print(error)
